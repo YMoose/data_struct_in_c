@@ -18,7 +18,7 @@ message(STATUS "unity is ${Unity_SRC_DIR}")
 
 add_executable(
     test_tree 
-    src/tree/test_tree.c
+    src/test/test_tree.c
     src/mem.c
     ${Unity_SRC_FILE}
     )
@@ -28,6 +28,7 @@ target_include_directories(
     PRIVATE
       ${Unity_SRC_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 add_library(MyStructInC

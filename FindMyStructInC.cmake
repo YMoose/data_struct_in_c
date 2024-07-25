@@ -13,10 +13,8 @@ set(MyStructInC_SEARCH_PATH_LIST
     $ENV{MyStructInC_ROOT}
 )
 
-find_path(MyStructInC_INCLUDE_DIR mem.h
+find_path(MyStructInC_INCLUDE_DIR my_struct_in_c.h
     HINTS ${MyStructInC_SEARCH_PATH_LIST}
     DOC "Find the check includes"
 )
-
-set(MyStructInC_UTIL_SRC)
 

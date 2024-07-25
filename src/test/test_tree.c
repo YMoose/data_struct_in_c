@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "unity.h"
-#include "bintree_node.h"
+#include "my_struct_in_c.h"
 
 void setUp(void)
 {
