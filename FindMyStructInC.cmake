@@ -18,3 +18,5 @@ find_path(MyStructInC_INCLUDE_DIR mem.h
     DOC "Find the check includes"
 )
 
+set(MyStructInC_UTIL_SRC)
+

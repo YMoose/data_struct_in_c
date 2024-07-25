@@ -9,3 +9,6 @@ find_path(Unity_SRC_DIR
     HINTS ${Unity_SEARCH_PATH_LIST}
     DOC "Find the unity includes"
 )
+
+set(Unity_SRC_FILE ${Unity_SRC_DIR}/unity.c)
+set(Unity_SRC_FILE ${Unity_SRC_DIR}/unity.c)
