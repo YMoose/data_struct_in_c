@@ -13,30 +13,43 @@ find_package(MyStructInC REQUIRED)
 execute_process(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gen_header_file.sh ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-
-message(STATUS "unity is ${Unity_SRC_DIR}")
-
-add_executable(
-    test_tree 
-    src/test/test_tree.c
-    src/mem.c
-    ${Unity_SRC_FILE}
-    )
-
-target_include_directories(
-    test_tree
-    PRIVATE
-      ${Unity_SRC_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/src
+execute_process(
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gen_header_file.sh ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+#message(STATUS "unity is ${Unity_SRC_DIR}")
 
 add_library(MyStructInC
   STATIC
   src/mem.c
 )
 
+macro(add_unit_test _name _source_files)
+    add_executable(
+        ${_name} 
+        ${_source_files}
+        src/mem.c
+        ${Unity_SRC_FILE}
+        )
+    target_include_directories(
+        ${_name}
+        PRIVATE
+            ${Unity_SRC_DIR}
+            ${CMAKE_CURRENT_SOURCE_DIR}
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+    add_test(
+        NAME
+            ${_name}
+        COMMAND
+            $<TARGET_FILE:${_name}>
+        )    
+endmacro()
+
 enable_testing()
+
+add_unit_test(test_tree src/test/test_tree.c)
+
 
 
 
