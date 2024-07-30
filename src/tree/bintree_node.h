@@ -70,10 +70,6 @@ void bintree_node_insert_as_rc(bintree_t* tree, bintree_node_t* parent, bintree_
 static inline
 bintree_t* bintree_new(alc_set* mem_alc_set, data_compare_func comp_func)
 {
-    if (comp_func == NULL)
-    {
-        return NULL;
-    }
     PRESET_MEM_ALC_SET(mem_alc_set);
     bintree_t* new_tree = (bintree_t*)MEM_ALLOC(mem_alc_set, sizeof(bintree_t));
     if (new_tree == NULL)
@@ -111,7 +107,7 @@ int bintree_add(bintree_t* tree, void* data)
     {
         p_node = cur_node;
         
-        if (tree->comp_func(data, (*cur_node)->data) <= 0)
+        if (tree->comp_func != NULL && tree->comp_func(data, (*cur_node)->data) <= 0)
         {
             cur_node = &((*cur_node)->child[0]);
             if (*cur_node == NULL)

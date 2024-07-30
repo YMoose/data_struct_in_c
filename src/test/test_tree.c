@@ -32,13 +32,20 @@ void test_tree(void)
     for (i = 0; i<10; i++)
     {
         bintree_add(tree, (void*)(rand()%40));
-    }// iterate tree
+    }
+    
+    // iterate tree
     bintree_order_traversal(tree, print_data);
     printf("\n");
+    
     // search tree node in tree
+    
     // delete tree node 
+    
     // iterate tree
+    
     // search tree node in tree
+    
 }
 
 int main(void) 
