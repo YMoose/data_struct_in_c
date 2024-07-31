@@ -21,14 +21,15 @@ typedef struct _list_t
     data_compare_func comp_func;
 }list_t;
 
-
+// export api
 static inline list_t* list_new(alc_set* mem_alc_set, data_compare_func comp_func);
 static inline int list_free(list_t* list);
 
 static inline int list_add_header(list_t* list, void* data);
 static inline int list_add_tail(list_t* list, void* data);
-static inline int list_remove_header(list_t* list, );
-static inline int list_remove_tail(list_t* list, );
+static inline int list_remove_header(list_t* list);
+static inline int list_remove_tail(list_t* list);
+static inline int list_traversal(list_t* list);
 
 static inline 
 list_t* list_new(alc_set* mem_alc_set, data_compare_func comp_func)
