@@ -29,7 +29,16 @@ static inline int list_add_header(list_t* list, void* data);
 static inline int list_add_tail(list_t* list, void* data);
 static inline int list_remove_header(list_t* list);
 static inline int list_remove_tail(list_t* list);
-static inline int list_traversal(list_t* list);
+static inline int list_traversal(list_t* list, data_traversal_func traversal_func);
+
+static inline 
+list_node_t* list_node_new(list_t* list, void* data)
+{
+    list_node_t* new_node = (list_node_t*)MEM_ALLOC(list->mem_alc_set, sizeof(list_node_t));
+    memset(new_node, 0, sizeof(list_node_t));
+    new_node->data = data;
+    return new_node;
+}
 
 static inline 
 list_t* list_new(alc_set* mem_alc_set, data_compare_func comp_func)
@@ -50,7 +59,52 @@ list_t* list_new(alc_set* mem_alc_set, data_compare_func comp_func)
 static inline 
 int list_add_header(list_t* list, void* data)
 {
-    
+    list_node_t* new_node = NULL;
+    new_node = list_node_new(list, data);
+    if (new_node == NULL)
+    {
+        return -1;
+    }
+    new_node->next = list->header;
+    list->header->prev = new_node;
+    list->header = new_node;
+    return 0;
+}
+
+static inline 
+int list_add_tail(list_t* list, void* data)
+{
+    list_node_t* new_node = NULL;
+    new_node = list_node_new(list, data);
+    if (new_node == NULL)
+    {
+        return -1;
+    }
+    new_node->prev = list->tailer;
+    list->tailer->next = new_node;
+    list->tailer = new_node;
+    return 0;
+}
+
+static inline 
+int list_traversal(list_t* list, data_traversal_func traversal_func)
+{
+    list_node_t* cur_node = list->header;
+    int cnt = 0;
+    while (cur_node != NULL)
+    {
+        cnt ++;
+        if (traversal_func == NULL)
+        {
+            continue;
+        }
+        if (traversal_func(cur_node->data) > 0)
+        {
+            break;
+        }
+    }
+
+    return cnt; 
 }
 
 #endif /* __INCLUDED_LIST_H__ */

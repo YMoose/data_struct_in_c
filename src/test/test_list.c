@@ -37,7 +37,7 @@ void test_list(void)
     }
     
     // iterate list
-    bintree_order_traversal(tree, print_data);
+    list_traversal(tree, print_data);
     printf("\n");
 
     // search ele in list

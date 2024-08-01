@@ -2,7 +2,7 @@
 
 root_dir=$1  
 output_file="my_struct_in_c.h"
-former_output_file = ${root_dir}+"/"+${output_file}
+former_output_file=${root_dir}+"/"+${output_file}
 
 traverse_directory() {
     local dir="$1"

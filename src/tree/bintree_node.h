@@ -171,11 +171,6 @@ int bintree_order_traversal(bintree_t* tree, data_traversal_func traversal_func)
     int back_from = -1;
     bintree_node_t* cur_node;
 
-    if (traversal_func == NULL)
-    {
-        return 0;
-    }
-
     tree_size = tree->size;
     node_vec = (void**) MEM_ALLOC(tree->mem_alc_set, sizeof(void*) * tree_size);
     cur_node = tree->root;
@@ -210,6 +205,12 @@ int bintree_order_traversal(bintree_t* tree, data_traversal_func traversal_func)
         back_from = 1;
     }
 
+    if (traversal_func == NULL)
+    {
+        return tree_size;
+    }
+
+    ret = 0;
     for (; ret < tree_size; ret++){
         if (traversal_func(node_vec[ret]) > 0){
             break;

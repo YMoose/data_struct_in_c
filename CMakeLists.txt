@@ -24,10 +24,10 @@ add_library(MyStructInC
   src/mem.c
 )
 
-macro(add_unit_test _name _source_files)
+macro(add_unit_test _name)
     add_executable(
         ${_name} 
-        ${_source_files}
+        src/test/${_name}.c
         src/mem.c
         ${Unity_SRC_FILE}
         )
@@ -49,6 +49,7 @@ endmacro()
 enable_testing()
 
 add_unit_test(test_tree src/test/test_tree.c)
+add_unit_test(test_list src/test/test_list.c)
 
 
 
