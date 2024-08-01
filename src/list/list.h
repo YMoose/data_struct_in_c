@@ -8,8 +8,8 @@
 
 typedef struct _list_node_t
 {
-    _list_node_t* prev;
-    _list_node_t* next;
+    struct _list_node_t* prev;
+    struct _list_node_t* next;
     void* data;
 }list_node_t;
 
@@ -66,7 +66,15 @@ int list_add_header(list_t* list, void* data)
         return -1;
     }
     new_node->next = list->header;
-    list->header->prev = new_node;
+    if (list->header != NULL)
+    {
+        list->header->prev = new_node;
+    }
+    else
+    {
+        // first node
+        list->tailer = new_node;
+    }
     list->header = new_node;
     return 0;
 }
@@ -81,7 +89,14 @@ int list_add_tail(list_t* list, void* data)
         return -1;
     }
     new_node->prev = list->tailer;
-    list->tailer->next = new_node;
+    if (list->tailer != NULL)
+    {
+        list->tailer->next = new_node;
+    }
+    else 
+    {
+        list->header = new_node;
+    }
     list->tailer = new_node;
     return 0;
 }
@@ -94,14 +109,11 @@ int list_traversal(list_t* list, data_traversal_func traversal_func)
     while (cur_node != NULL)
     {
         cnt ++;
-        if (traversal_func == NULL)
-        {
-            continue;
-        }
-        if (traversal_func(cur_node->data) > 0)
+        if (traversal_func != NULL && traversal_func(cur_node->data) > 0)
         {
             break;
         }
+        cur_node = cur_node->next;
     }
 
     return cnt; 

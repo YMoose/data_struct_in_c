@@ -37,7 +37,7 @@ void test_list(void)
     }
     
     // iterate list
-    list_traversal(tree, print_data);
+    list_traversal(list, print_data);
     printf("\n");
 
     // search ele in list
