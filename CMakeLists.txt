@@ -10,9 +10,14 @@ list(APPEND CMAKE_MODULE_PATH
 find_package(Unity REQUIRED)
 find_package(MyStructInC REQUIRED)
 
-execute_process(
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gen_header_file.sh ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    message(STATUS "Configuring on/for Linux")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    message(STATUS "Configuring on/for Windows")
+else()
+    message(STATUS "Configuring on/for ${CMAKE_SYSTEM_NAME}")
+endif()
+
 execute_process(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gen_header_file.sh ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
