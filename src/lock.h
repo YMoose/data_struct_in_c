@@ -33,7 +33,7 @@ static inline
 int mutex_destory(mutex_t* lock)
 {
 #ifdef __LINUX__
-    pthread_mutex_destory(&(lock->lock));
+    pthread_mutex_destroy(&(lock->lock));
 #elif __WINDOWS__
 #endif /* __LINUX__/__WINDOWS__ */
 }
