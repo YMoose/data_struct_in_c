@@ -10,17 +10,17 @@
 
 
 // mutex
-typedef struct _mutex_t
+typedef struct _sync_mutex_t
 {
 #ifdef __LINUX__
     pthread_mutex_t lock;
 #elif __WINDOWS__
 #endif /* __LINUX__/__WINDOWS__ */
-}mutex_t;
+}sync_mutex_t;
 
 // init
 static inline 
-int mutex_init(mutex_t* lock)
+int sync_mutex_init(sync_mutex_t* lock)
 {
 #ifdef __LINUX__
     pthread_mutex_init(&(lock->lock), NULL);
@@ -30,7 +30,7 @@ int mutex_init(mutex_t* lock)
 
 // destory
 static inline
-int mutex_destory(mutex_t* lock)
+int sync_mutex_destory(sync_mutex_t* lock)
 {
 #ifdef __LINUX__
     pthread_mutex_destroy(&(lock->lock));
@@ -40,7 +40,7 @@ int mutex_destory(mutex_t* lock)
 
 // lock
 static inline
-int mutex_lock(mutex_t* lock)
+int sync_mutex_lock(sync_mutex_t* lock)
 {
 #ifdef __LINUX__
     pthread_mutex_lock(&(lock->lock));
@@ -50,7 +50,7 @@ int mutex_lock(mutex_t* lock)
 
 // unlock
 static inline
-int mutex_unlock(mutex_t* lock)
+int sync_mutex_unlock(sync_mutex_t* lock)
 {
 #ifdef __LINUX__
     pthread_mutex_unlock(&(lock->lock));
