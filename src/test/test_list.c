@@ -13,31 +13,45 @@ void tearDown(void)
 
 }
 
-int compare_num(void* data, void* base)
+typedef struct _test_node_t
 {
-    return (int)data - (int)base;
-}
+    list_node_t list;
+    int number;
+}test_node_t;
 
-int print_data(void* data)
+typedef struct _test_node_list
 {
-    printf("%d ",(int)data);
+    test_node_t* header;
+}test_node_list_t;
+
+int data_print(test_node_t* node)
+{
+    printf("%d ",node->number);
     return 0;
 }
 
-void test_list(void)
+void list_test(void)
 {
     // init
-    list_t* list = list_new(NULL, compare_num);
+    test_node_list_t test;
+    list_node_t *cur = NULL;
+    test.header = malloc(sizeof(test_node_t));
+    list_head_init(&(test.header->list));
 
-    // add tree node
+    // add list node
     int i = 0;
     for (i = 0; i<10; i++)
     {
-        list_add_tail(list, (void*)(rand()%40));
+        test_node_t *new_node = malloc(sizeof(test_node_t));
+        new_node->number = rand() % 40;
+        list_add_tail(&(new_node->list), &(test.header->list));
     }
     
     // iterate list
-    list_traversal(list, print_data);
+    list_for_each(cur, &(test.header->list))
+    {
+        data_print(list_entry(cur, test_node_t, list));
+    }
     printf("\n");
 
     // search ele in list
@@ -46,13 +60,13 @@ void test_list(void)
 
     // iterate list
 
-    // search ele in tree
+    // search ele in list
 
 }
 
 int main(void) 
 {
     UNITY_BEGIN();
-    RUN_TEST(test_list);
+    RUN_TEST(list_test);
     return UNITY_END();
 }

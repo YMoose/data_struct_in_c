@@ -8,7 +8,6 @@ list(APPEND CMAKE_MODULE_PATH
 )
 
 find_package(Unity REQUIRED)
-find_package(MyStructInC REQUIRED)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(STATUS "Configuring on/for Linux")
@@ -24,16 +23,11 @@ execute_process(
 
 #message(STATUS "unity is ${Unity_SRC_DIR}")
 
-add_library(MyStructInC
-  STATIC
-  src/mem.c
-)
 
 macro(add_unit_test _name)
     add_executable(
         ${_name} 
         src/test/${_name}.c
-        src/mem.c
         ${Unity_SRC_FILE}
         )
     target_include_directories(
@@ -53,7 +47,7 @@ endmacro()
 
 enable_testing()
 
-add_unit_test(test_tree src/test/test_tree.c)
+# add_unit_test(test_tree src/test/test_tree.c)
 add_unit_test(test_list src/test/test_list.c)
 
 

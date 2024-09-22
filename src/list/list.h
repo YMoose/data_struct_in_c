@@ -1,160 +1,96 @@
 #ifndef __INCLUDED_LIST_H__
 #define __INCLUDED_LIST_H__
 
-#include <stddef.h>
-#include <strings.h>
-#include "mem.h"
 #include "util.h"
-#include "sync.h"
 
+// just like list in kernel
 typedef struct _list_node_t
 {
     struct _list_node_t* prev;
     struct _list_node_t* next;
-    void* data;
 }list_node_t;
 
-typedef struct _list_t
-{
-    list_node_t* header;
-    list_node_t* tailer;
-    alc_set* mem_alc_set;
-    data_compare_func comp_func;
-    
-    uint32_t is_mp_safe;
-    sync_mutex_t* lock;
-}list_t;
-
 // export api
-static inline list_t* list_new(alc_set* mem_alc_set, data_compare_func comp_func, uint32_t is_mp_safe);
-static inline int list_free(list_t* list);
+/**
+ * list_entry - get the struct for this entry
+ * @ptr:	the &struct list_head pointer.
+ * @type:	the type of the struct this is embedded in.
+ * @list_node:	the name of the list_node_t within the struct.
+ */
+#define list_entry(list_ptr, type, list_node) \
+    (type *)((char *)(list_ptr) - offsetof(type, list_node))
 
-static inline int list_add_header(list_t* list, void* data);
-static inline int list_add_tail(list_t* list, void* data);
-static inline int list_remove_header(list_t* list);
-static inline int list_remove_tail(list_t* list);
-static inline int list_traversal(list_t* list, data_traversal_func traversal_func);
+static inline void list_head_init(list_node_t* head);
+static inline int list_add(list_node_t* new, list_node_t* head);
+static inline int list_add_tail(list_node_t* new, list_node_t* head);
+static inline list_node_t* list_del(list_node_t* node);
+static inline int list_move(list_node_t* node, list_node_t* dst);
+static inline int list_move_tail(list_node_t* node, list_node_t* dst);
+static inline int list_empty(list_node_t* head) {return head == NULL;}
+static inline int list_splice(list_node_t* src, list_node_t* dst);
+static inline int list_splice_tail(list_node_t* src, list_node_t* dst);
 
-static inline 
-list_node_t* list_node_new(list_t* list, void* data)
+#define list_for_each(cur, head) \
+    for ((cur) = (head)->next; (cur) != (head); (cur) = (cur)->next)
+
+static inline void list_head_init(list_node_t* head)
 {
-    list_node_t* new_node = (list_node_t*)MEM_ALLOC(list->mem_alc_set, sizeof(list_node_t));
-    memset(new_node, 0, sizeof(list_node_t));
-    new_node->data = data;
-    return new_node;
+    head->next = head;
+    head->prev = head;
 }
 
-static inline 
-list_t* list_new(alc_set* mem_alc_set, data_compare_func comp_func, uint32_t is_mp_safe)
+static inline int list_add(list_node_t* new, list_node_t* head)
 {
-    PRESET_MEM_ALC_SET(mem_alc_set);
-    list_t* new_list = (list_t*)MEM_ALLOC(mem_alc_set, sizeof(list_t));
-    if (new_list == NULL)
-    {
-        return NULL;
-    }
-    new_list->comp_func = comp_func;
-    new_list->mem_alc_set = mem_alc_set;
-    new_list->header = NULL;
-    new_list->tailer = NULL;
-    new_list->is_mp_safe = is_mp_safe;
-    if (new_list->is_mp_safe != 0)
-    {
-        sync_mutex_init(&(new_list->lock));
-    }
-    return new_list;
-}
-
-static inline 
-int list_add_header(list_t* list, void* data)
-{
-    list_node_t* new_node = NULL;
-    new_node = list_node_new(list, data);
-    if (new_node == NULL)
-    {
-        return -1;
-    }
-    
-    new_node->next = list->header;
-    
-    if (list->is_mp_safe != 0)
-    {
-        sync_mutex_lock(&(list->lock));
-    }
-    
-    if (list->header != NULL)
-    {
-        list->header->prev = new_node;
-    }
-    else
-    {
-        // first node
-        list->tailer = new_node;
-    }
-    list->header = new_node;
-    
-    if (list->is_mp_safe != 0)
-    {
-        sync_mutex_unlock(&(list->lock));
-    }
+    new->next = head->next;
+    new->prev = head;
+    head->next->prev = new;
+    head->next = new;
     return 0;
 }
 
-static inline 
-int list_add_tail(list_t* list, void* data)
+static inline int list_add_tail(list_node_t* new, list_node_t* head)
 {
-    list_node_t* new_node = NULL;
-    new_node = list_node_new(list, data);
-    if (new_node == NULL)
-    {
-        return -1;
-    }
-    new_node->prev = list->tailer;
-    
-    if (list->is_mp_safe != 0)
-    {
-        sync_mutex_lock(&(list->lock));
-    }
-    if (list->tailer != NULL)
-    {
-        list->tailer->next = new_node;
-    }
-    else 
-    {
-        list->header = new_node;
-    }
-    list->tailer = new_node;
-
-    if (list->is_mp_safe != 0)
-    {
-        sync_mutex_unlock(&(list->lock));
-    }
+    new->next = head;
+    new->prev = head->prev;
+    head->prev->next = new;
+    head->prev = new;
     return 0;
 }
 
-static inline 
-int list_traversal(list_t* list, data_traversal_func traversal_func)
+static inline list_node_t* list_del(list_node_t* node)
 {
-    if (list->is_mp_safe != 0)
-    {
-        sync_mutex_lock(&(list->lock));
-    }
-    list_node_t* cur_node = list->header;
-    int cnt = 0;
-    while (cur_node != NULL)
-    {
-        cnt ++;
-        if (traversal_func != NULL && traversal_func(cur_node->data) > 0)
-        {
-            break;
-        }
-        cur_node = cur_node->next;
-    }
-    if (list->is_mp_safe != 0)
-    {
-        sync_mutex_unlock(&(list->lock));
-    }
-    return cnt; 
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    return node;
+}
+
+static inline int list_move(list_node_t* node, list_node_t* dst)
+{
+    list_del(node);
+    return list_add(node, dst);
+}
+static inline int list_move_tail(list_node_t* node, list_node_t* dst)
+{
+    list_del(node);
+    return list_add_tail(node, dst);
+}
+
+static inline int list_splice(list_node_t* src, list_node_t* dst)
+{
+    list_node_t* src_tail = src->prev;
+    src->prev = dst;
+    src_tail->next = dst->next;
+    dst->next = src;
+    dst->next->prev = src_tail;
+}
+
+static inline int list_splice_tail(list_node_t* src, list_node_t* dst)
+{
+    list_node_t* src_tail = src->prev;
+    src->prev = dst->prev;
+    src_tail->next = dst;
+    dst->prev = src_tail;
+    dst->prev->next = src;
 }
 
 #endif /* __INCLUDED_LIST_H__ */
