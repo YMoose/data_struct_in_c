@@ -17,9 +17,6 @@ else()
     message(STATUS "Configuring on/for ${CMAKE_SYSTEM_NAME}")
 endif()
 
-execute_process(
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gen_header_file.sh ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
 
 #message(STATUS "unity is ${Unity_SRC_DIR}")
 

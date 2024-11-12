@@ -10,7 +10,6 @@ typedef struct _list_node_t
     struct _list_node_t* next;
 }list_node_t;
 
-// export api
 /**
  * list_entry - get the struct for this entry
  * @ptr:	the &struct list_head pointer.
