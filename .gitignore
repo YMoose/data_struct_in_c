@@ -1,4 +1,3 @@
 .vscode/**
 build/**
 a.out
-src/my_struct_in_c.h
