@@ -2,9 +2,6 @@
 #define __INCLUDED_QUEUE_H__
 
 #include "util.h"
-// #include <types.h>
-#include <stdint.h>
-#include <string.h>
 
 // refer to kfifo in kernel, would be MP-safe in scene of single producer and
 // single comsumer
@@ -48,10 +45,10 @@ __queue_in_data (queue_t *queue, const void *from, uint64_t len)
 
   /* first put the data starting from queue->in to buffer end */
   l = min (len, queue->size - queue->in);
-  memcpy (queue->buffer + queue->in, from, l);
+  _my_memcpy_imp (queue->buffer + queue->in, from, l);
 
   /* then put the rest (if any) at the beginning of the buffer */
-  memcpy (queue->buffer, from + l, len - l);
+  _my_memcpy_imp (queue->buffer, from + l, len - l);
   return;
 }
 
@@ -68,10 +65,10 @@ __queue_out_data (queue_t *queue, void *to, uint64_t len)
 
   /* first get the data from fifo->out until the end of the buffer */
   l = min (len, queue->size - queue->out);
-  memcpy (to, queue->buffer + queue->out, l);
+  _my_memcpy_imp (to, queue->buffer + queue->out, l);
 
   /* then get the rest (if any) from the beginning of the buffer */
-  memcpy (to + l, queue->buffer, len - l);
+  _my_memcpy_imp (to + l, queue->buffer, len - l);
   return;
 }
 
