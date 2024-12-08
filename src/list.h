@@ -25,7 +25,7 @@ static inline int list_add_tail(list_node_t* new, list_node_t* head);
 static inline list_node_t* list_del(list_node_t* node);
 static inline int list_move(list_node_t* node, list_node_t* dst);
 static inline int list_move_tail(list_node_t* node, list_node_t* dst);
-static inline int list_empty(list_node_t* head) {return head == NULL;}
+static inline int list_empty(list_node_t* head) {return head->next == head;}
 static inline int list_splice(list_node_t* src, list_node_t* dst);
 static inline int list_splice_tail(list_node_t* src, list_node_t* dst);
 

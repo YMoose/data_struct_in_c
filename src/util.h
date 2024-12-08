@@ -9,4 +9,8 @@
 #endif /* __compiler_offsetof */
 #endif /* offsetof */
 
+#define COMPILER_BARRIER() asm volatile ("":::"memory")
+
+#define min(a, b) (a)<(b)?(a):(b)
+
 #endif /* __INCLUDE_UTIL_H__ */

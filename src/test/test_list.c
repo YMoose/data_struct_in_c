@@ -37,6 +37,7 @@ void list_test(void)
     list_node_t *cur = NULL;
     test.header = malloc(sizeof(test_node_t));
     list_head_init(&(test.header->list));
+    TEST_ASSERT_TRUE(1 == list_empty(&(test.header->list)));
 
     // add list node
     int i = 0;
