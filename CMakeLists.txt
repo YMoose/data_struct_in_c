@@ -27,6 +27,7 @@ macro(add_unit_test _name)
         src/test/${_name}.c
         ${Unity_SRC_FILE}
         )
+    target_compile_options(${_name} PUBLIC -g)
     target_include_directories(
         ${_name}
         PRIVATE
@@ -47,6 +48,7 @@ enable_testing()
 # add_unit_test(test_tree src/test/test_tree.c)
 add_unit_test(test_list src/test/test_list.c)
 add_unit_test(test_queue src/test/test_queue.c)
+add_unit_test(test_algo src/test/test_algo.c)
 
 
 
