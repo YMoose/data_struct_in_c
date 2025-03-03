@@ -51,4 +51,10 @@ _my_mfree_imp (void *ptr)
 #define DBG(_fmt, _args...) 
 #endif /* IS_DBG */
 
+static inline
+uint32_t round_pow2 (uint32_t x, uint32_t pow2)
+{
+  return (x + pow2 - 1) & ~(pow2 - 1);
+}
+
 #endif /* __INCLUDE_MY_STRUCT_UTIL_H__ */

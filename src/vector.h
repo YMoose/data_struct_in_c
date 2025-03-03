@@ -1,59 +1,88 @@
 #ifndef __INCLUDED_VECTOR_H__
 #define __INCLUDED_VECTOR_H__
 
-#include <stddef.h>
-#include <strings.h>
-#include <math.h>
-#include "mem.h"
 #include "util.h"
 
-typedef struct _vector_t 
+#define VEC_ALIGN 8
+
+typedef struct _vector_header_t
 {
-    alc_set* mem_alc_set;
-    void* ele_vec;
-    uint32_t ele_size;
     uint32_t vec_size;
-}vector_t;
+    uint32_t ele_size;
+    uint32_t len;
+    uint32_t padding[1];
+    uint8_t vector_data[0];
+}vector_header_t;
 
-static inline vector_t* vec_alloc(alc_set* mem_alc_set, uint32_t ele_size, uint32_t vec_size);
-static inline vector_t* vec_realloc(vector_t* vec, uint32_t new_ele_size);
-static inline int vec_free(vector_t* vec);
+/** \brief Find the vector header
 
-static inline uint32_t vec_size(vector_t* vec);
+    Given the user's pointer to a vector, find the corresponding
+    vector header
 
-static inline int vec_append(vector_t* vec, void* data);
-// static inline int vec_delete_tail(vector_t* vec);
-static inline int vec_traversal(vector_t* vec, data_traversal_func traversal_func);
+    @param v pointer to a vector
+    @return pointer to the vector's vector_header_t
+*/
+#define _vec_find(v)	((vector_header_t *) (v) - 1)
 
+static inline void* vec_alloc(uint32_t ele_size, uint32_t vec_size);
+static inline void vec_free(void* vec);
+static inline uint32_t vec_size(void* vec);
+static inline void* vec_validate(void* vec, uint32_t index);
+static inline void* _vec_resize(void* vec, uint32_t new_ele_size);
 
 static inline 
-int vec_free(vector_t* vec)
+void* vec_alloc(uint32_t ele_size, uint32_t vec_size)
 {
-    MEM_FREE(vec->mem_alc_set, vec);
-    return 0;
+    uint32_t req_size = 0;
+    
+    assert(__builtin_mul_overflow(ele_size, vec_size) == 0);
+    req_size = sizeof(vector_header_t) + ele_size * vec_size;
+    assert(req_size > sizeof(vector_header_t));
+
+    req_size = round_pow2(req_size, VEC_ALIGN);
+    vector_header_t* h = (vector_header_t*)_my_malloc_imp(req_size);
+
+    return h == NULL? NULL: h->vector_data;
 }
 
 static inline 
-vector_t* vec_alloc(alc_set* mem_alc_set, uint32_t ele_size, uint32_t vec_size)
+void vec_free(void* vec)
 {
-    PRESET_MEM_ALC_SET(mem_alc_set);
-    vector_t* new_vec = (vector_t*)MEM_ALLOC(mem_alc_set, sizeof(vector_t));
-    if (new_vec == NULL)
+    if (vec != NULL)
+        _my_mfree_imp(_vec_find(vec));
+    return;
+}
+
+static inline 
+uint32_t vec_size(void* vec)
+{
+    return vec==NULL ? 0: _vec_find(vec)->vec_size;
+}
+
+static inline 
+void* vec_validate(void* vec, uint32_t index)
+{
+    uint32_t req_size = 0;
+    vector_header_t* h = _vec_find(vec);
+    if (vec != NULL && h->len <= index)
     {
-        return NULL;
+        return _vec_resize(vec, index + 1);
     }
-    new_vec->ele_size = ele_size;
-    new_vec->vec_size = vec_size;
-    new_vec->mem_alc_set = mem_alc_set;
-    new_vec->ele_vec = MEM_ALLOC(new_vec->mem_alc_set, ele_size * vec_size);
-    if (new_vec->ele_vec == NULL)
-    {
-        vec_free(new_vec);
-        return NULL;
-    }
+    
+    return vec;
+}
+
+static inline 
+void* _vec_resize(void* vec, uint32_t new_vec_size)
+{
+    assert(vec != NULL);
+    vector_header_t* h = _vec_find(vec);
+    if (new_vec_size <= h->len)
+        return vec;
+    void* new_vec = vec_alloc(h->ele_size, new_vec_size);
+    _my_memcpy_imp(new_vec, vec, h->vec_size);
+
     return new_vec;
 }
-
-static inline int vec_append(vector_t* vec, void* data);
 
 #endif /* __INCLUDED_VECTOR_H__ */

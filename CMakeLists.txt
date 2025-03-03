@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-
 project(MyStructInC LANGUAGES C)
 
+set(CMAKE_BUILD_TYPE Debug)
 list(APPEND CMAKE_MODULE_PATH 
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake
@@ -49,6 +49,7 @@ enable_testing()
 add_unit_test(test_list src/test/test_list.c)
 add_unit_test(test_queue src/test/test_queue.c)
 add_unit_test(test_algo src/test/test_algo.c)
+add_unit_test(test_vec src/test/test_vec.c)
 
 
 
