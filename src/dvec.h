@@ -11,7 +11,7 @@ static inline void dvec_free(void* dvec) { vec_free(dvec);}
 static inline uint32_t dvec_size(void* dvec) {return vec_size(dvec);}
 
 static inline void* dvec_append (void* dvec, void* ele);
-static inline uint32_t dvec_len(void* dvec) { return vec_get_userdata(dvec); }
+static inline uint32_t dvec_len(void* dvec) { return (uint32_t)vec_get_userdata(dvec); }
 
 static inline void* dvec_alloc (uint32_t ele_size)
 {
@@ -35,7 +35,7 @@ static inline void* dvec_append (void* dvec, void* ele)
     }
 
     _my_memcpy_imp((uint8_t*)ret + (len * ele_size), ele, ele_size);
-    vec_set_userdata(ret, len + 1);
+    vec_set_userdata(ret, (void*)(len + 1));
     return ret;
 }
 

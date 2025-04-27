@@ -17,7 +17,7 @@ uint8_t* bitmap_alloc(uint32_t size)
 {
     uint8_t* ret = NULL;
     ret = (uint8_t*)vec_alloc(sizeof(uint8_t),((size >> 3) + 1));
-    vec_set_userdata(ret, size);
+    vec_set_userdata(ret, (void*)size);
     memset(ret, 0, ((size >> 3) + 1));
     return ret;
 }

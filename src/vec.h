@@ -9,7 +9,7 @@ typedef struct _vec_header_t
 {
     uint32_t vec_size;
     uint32_t ele_size;
-    uint64_t padding[1];
+    void* padding[1];
     uint8_t data[0];
 }vec_header_t;
 
@@ -28,8 +28,8 @@ static inline void vec_free(void* vec);
 static inline uint32_t vec_size(void* vec);
 static inline void* vec_validate(void* vec, uint32_t ele_size, uint32_t index);
 static inline void* _vec_resize(void* vec, uint32_t new_ele_size);
-static inline uint64_t vec_get_userdata(void* vec);
-static inline uint64_t vec_set_userdata(void* vec, uint64_t value);
+static inline void* vec_get_userdata(void* vec);
+static inline void* vec_set_userdata(void* vec, void* value);
 
 static inline 
 void* vec_alloc(uint32_t ele_size, uint32_t vec_size)
@@ -95,19 +95,16 @@ void* _vec_resize(void* vec, uint32_t new_vec_size)
 }
 
 static inline
-uint64_t vec_get_userdata(void* vec)
+void* vec_get_userdata(void* vec)
 {
-    return vec == NULL? 0: _vec_find(vec)->padding[0];
+    assert (vec != NULL);
+    return _vec_find(vec)->padding[0];
 }
 
-static inline uint64_t vec_set_userdata(void* vec, uint64_t value)
+static inline void* vec_set_userdata(void* vec, void* value)
 {
-    if (vec == NULL)
-    {
-        return 0;
-    }
-    
-    uint64_t ret = _vec_find(vec)->padding[0];
+    assert (vec != NULL);
+    void* ret = _vec_find(vec)->padding[0];
     _vec_find(vec)->padding[0] = value;
     return ret;
 }
