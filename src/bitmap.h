@@ -7,7 +7,7 @@
 #define BITMAP_MASK (0b111)
 
 static inline uint8_t* bitmap_alloc(uint32_t size);
-static inline uint32_t bitmap_size(uint8_t* bitmap) {return (uint32_t)vec_get_userdata(bitmap);}
+static inline uint32_t bitmap_size(uint8_t* bitmap) {return ((uint32_t*)(vec_userdata(bitmap)))[0];}
 static inline void bitmap_free(uint8_t* bitmap) {vec_free(bitmap);}
 static inline uint8_t bitmap_set(uint8_t* bitmap, uint32_t index);
 static inline uint8_t bitmap_unset(uint8_t* bitmap, uint32_t index);
@@ -17,7 +17,7 @@ uint8_t* bitmap_alloc(uint32_t size)
 {
     uint8_t* ret = NULL;
     ret = (uint8_t*)vec_alloc(sizeof(uint8_t),((size >> 3) + 1));
-    vec_set_userdata(ret, (void*)size);
+    ((uint32_t*)(vec_userdata(ret)))[0] = 0;
     memset(ret, 0, ((size >> 3) + 1));
     return ret;
 }

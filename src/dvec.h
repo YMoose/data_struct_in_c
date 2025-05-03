@@ -11,19 +11,19 @@ static inline void dvec_free(void* dvec) { vec_free(dvec);}
 static inline uint32_t dvec_size(void* dvec) {return vec_size(dvec);}
 
 static inline void* dvec_append (void* dvec, void* ele);
-static inline uint32_t dvec_len(void* dvec) { return (uint32_t)vec_get_userdata(dvec); }
+static inline uint32_t dvec_len(void* dvec) { return ((uint32_t*)(vec_userdata(dvec)))[0]; }
 
 static inline void* dvec_alloc (uint32_t ele_size)
 {
     void* ret = vec_alloc(ele_size, ADAPTIVE_INIT_CAP);
-    vec_set_userdata(ret, 0);
+    ((uint32_t*)(vec_userdata(ret)))[0] = 0;
     return ret;
 }
 
 static inline void* dvec_append (void* dvec, void* ele)
 {
     assert(dvec != NULL);
-    uint32_t len = (uint32_t)vec_get_userdata(dvec);
+    uint32_t len = ((uint32_t*)(vec_userdata(dvec)))[0];
     uint32_t cap = vec_size(dvec);
     uint32_t ele_size = _vec_find(dvec)->ele_size;
     void* ret = dvec;
@@ -35,7 +35,7 @@ static inline void* dvec_append (void* dvec, void* ele)
     }
 
     _my_memcpy_imp((uint8_t*)ret + (len * ele_size), ele, ele_size);
-    vec_set_userdata(ret, (void*)(len + 1));
+    ((uint32_t*)(vec_userdata(dvec)))[0] = len + 1;
     return ret;
 }
 

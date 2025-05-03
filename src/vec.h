@@ -9,7 +9,11 @@ typedef struct _vec_header_t
 {
     uint32_t vec_size;
     uint32_t ele_size;
-    void* padding[1];
+    union {
+        void* padding_ptr[1];
+        uint64_t padding_u64[1];
+        uint32_t padding_u32[2];
+    };
     uint8_t data[0];
 }vec_header_t;
 
@@ -28,8 +32,7 @@ static inline void vec_free(void* vec);
 static inline uint32_t vec_size(void* vec);
 static inline void* vec_validate(void* vec, uint32_t ele_size, uint32_t index);
 static inline void* _vec_resize(void* vec, uint32_t new_ele_size);
-static inline void* vec_get_userdata(void* vec);
-static inline void* vec_set_userdata(void* vec, void* value);
+static inline void* vec_userdata(void* vec);
 
 static inline 
 void* vec_alloc(uint32_t ele_size, uint32_t vec_size)
@@ -95,18 +98,10 @@ void* _vec_resize(void* vec, uint32_t new_vec_size)
 }
 
 static inline
-void* vec_get_userdata(void* vec)
+void* vec_userdata(void* vec)
 {
     assert (vec != NULL);
-    return _vec_find(vec)->padding[0];
-}
-
-static inline void* vec_set_userdata(void* vec, void* value)
-{
-    assert (vec != NULL);
-    void* ret = _vec_find(vec)->padding[0];
-    _vec_find(vec)->padding[0] = value;
-    return ret;
+    return _vec_find(vec)->padding_ptr[0];
 }
 
 #endif /* __INCLUDED_VEC_H__ */

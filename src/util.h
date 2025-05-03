@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 #ifndef offsetof
 #ifdef __compiler_offsetof
@@ -23,7 +24,7 @@
 
 #include <stdlib.h>
 static_always_inline void *
-_my_memcpy_imp (void *restrict dst, const void *restrict src, size_t n)
+_my_memcpy_imp (void * dst, const void * src, size_t n)
 {
   return memcpy (dst, src, n);
 }
@@ -42,7 +43,10 @@ _my_mfree_imp (void *ptr)
 
 #endif /* MEM_OP_IMP */
 
+#ifndef IS_DBG
 #define IS_DBG (1)
+#endif /* IS_DBG */
+
 #if IS_DBG
 #include <stdio.h>
 #define DBG(_fmt, _args...)                                                   \
