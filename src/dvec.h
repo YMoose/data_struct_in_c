@@ -9,7 +9,7 @@
 static inline void* dvec_alloc (uint32_t ele_size);
 static inline void dvec_free(void* dvec) { vec_free(dvec);}
 static inline uint32_t dvec_size(void* dvec) {return vec_size(dvec);}
-
+static inline void dvec_reset (void* dvec) {((uint32_t*)(vec_userdata(dvec)))[0] = 0;}
 static inline void* dvec_append (void* dvec, void* ele);
 static inline uint32_t dvec_len(void* dvec) { return ((uint32_t*)(vec_userdata(dvec)))[0]; }
 
