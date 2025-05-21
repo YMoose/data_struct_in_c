@@ -46,10 +46,10 @@ endmacro()
 enable_testing()
 
 # add_unit_test(test_tree src/test/test_tree.c)
+add_unit_test(test_vec src/test/test_vec.c)
 add_unit_test(test_list src/test/test_list.c)
 add_unit_test(test_queue src/test/test_queue.c)
 add_unit_test(test_algo src/test/test_algo.c)
-add_unit_test(test_vec src/test/test_vec.c)
 
 
 

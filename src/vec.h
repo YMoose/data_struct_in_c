@@ -30,6 +30,7 @@ typedef struct _vec_header_t
 static inline void* vec_alloc(uint32_t ele_size, uint32_t vec_size);
 static inline void vec_free(void* vec);
 static inline uint32_t vec_size(void* vec);
+static inline uint32_t vec_ele_size(void* vec);
 static inline void* vec_validate(void* vec, uint32_t ele_size, uint32_t index);
 static inline void* _vec_resize(void* vec, uint32_t new_ele_size);
 static inline void* vec_userdata(void* vec);
@@ -39,7 +40,7 @@ void* vec_alloc(uint32_t ele_size, uint32_t vec_size)
 {
     uint32_t req_size = 0;
     
-    assert(__builtin_mul_overflow(ele_size, vec_size) == 0);
+    assert(is_mul_overflow(ele_size, vec_size) == 0);
     req_size = sizeof(vec_header_t) + ele_size * vec_size;
     assert(req_size > sizeof(vec_header_t));
 
@@ -61,6 +62,12 @@ static inline
 uint32_t vec_size(void* vec)
 {
     return vec==NULL ? 0: _vec_find(vec)->vec_size;
+}
+
+static inline 
+uint32_t vec_ele_size(void* vec)
+{
+    return vec==NULL ? 0: _vec_find(vec)->ele_size;
 }
 
 static inline 

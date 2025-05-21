@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include <limits.h>
 
 #ifndef offsetof
 #ifdef __compiler_offsetof
@@ -59,6 +60,11 @@ static inline
 uint32_t round_pow2 (uint32_t x, uint32_t pow2)
 {
   return (x + pow2 - 1) & ~(pow2 - 1);
+}
+
+static inline 
+uint8_t is_mul_overflow(size_t a, size_t b) {
+  return (b != 0 && a > SIZE_MAX / b);
 }
 
 #endif /* __INCLUDE_MY_STRUCT_UTIL_H__ */

@@ -25,7 +25,7 @@ static inline void* dvec_append (void* dvec, void* ele)
     assert(dvec != NULL);
     uint32_t len = ((uint32_t*)(vec_userdata(dvec)))[0];
     uint32_t cap = vec_size(dvec);
-    uint32_t ele_size = _vec_find(dvec)->ele_size;
+    uint32_t ele_size = vec_ele_size(dvec);
     void* ret = dvec;
     if (cap < len + 1)
     {
